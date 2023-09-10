@@ -92,7 +92,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	}
 
 	public function simple_disable_comments_create_admin_page() {
-		$this->simple_disable_comments_options = get_option( 'simple_disable_comments_option_name' ); ?>
+		$this->simple_disable_comments_options = get_option( 'SDC_comments_setting' ); 
+		error_log(print_r($this->simple_disable_comments_options, true));
+		?>
 
 		<div class="wrap">
 			<h2>Simple Disable Comments</h2>
@@ -101,7 +103,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<form method="post" action="options.php">
 				<?php
-					settings_fields( 'simple_disable_comments_option_group' );
+					settings_fields( 'SDC_comments' );
 					do_settings_sections( 'simple-disable-comments-admin' );
 					submit_button();
 				?>
@@ -110,60 +112,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php }
 
 	public function simple_disable_comments_page_init() {
-		register_setting(
-			'simple_disable_comments_option_group', // option_group
-			'simple_disable_comments_option_name', // option_name
-			array( $this, 'simple_disable_comments_sanitize' ) // sanitize_callback
-		);
-
-		add_settings_section(
-			'simple_disable_comments_setting_section', // id
-			'Simple Disable Comments Settings', // title
-			array( $this, 'simple_disable_comments_section_info' ), // callback
-			'simple-disable-comments-admin' // page
-		);
-
-		add_settings_field(
-			'remove_comments_links_from_admin_bar_0', // id
-			'Remove comments links from admin bar', // title
-			array( $this, 'remove_comments_links_from_admin_bar_0_callback' ), // callback
-			'simple-disable-comments-admin', // page
-			'simple_disable_comments_setting_section' // section
-		);
-
-		// add_settings_field(
-		// 	'remove_comments_page_in_menu_1', // id
-		// 	'Remove comments page in menu', // title
-		// 	array( $this, 'remove_comments_page_in_menu_1_callback' ), // callback
-		// 	'simple-disable-comments-admin', // page
-		// 	'simple_disable_comments_setting_section' // section
-		// );
-
-		// add_settings_field(
-		// 	'hide_existing_comments_2', // id
-		// 	'Hide existing comments', // title
-		// 	array( $this, 'hide_existing_comments_2_callback' ), // callback
-		// 	'simple-disable-comments-admin', // page
-		// 	'simple_disable_comments_setting_section' // section
-		// );
-
-		// add_settings_field(
-		// 	'close_comments_on_the_front_end_3', // id
-		// 	'Close comments on the front-end', // title
-		// 	array( $this, 'close_comments_on_the_front_end_3_callback' ), // callback
-		// 	'simple-disable-comments-admin', // page
-		// 	'simple_disable_comments_setting_section' // section
-		// );
-
-		// add_settings_field(
-		// 	'remove_comments_metabox_from_dashboard_4', // id
-		// 	'Remove comments metabox from dashboard', // title
-		// 	array( $this, 'remove_comments_metabox_from_dashboard_4_callback' ), // callback
-		// 	'simple-disable-comments-admin', // page
-		// 	'simple_disable_comments_setting_section' // section
-		// );
-
-
 		// Simple Disable Commnets Plugin Starts
 	    global $pagenow;
 	     
@@ -183,71 +131,110 @@ if ( ! defined( 'ABSPATH' ) ) {
 	        }
 	    }
 
+
+		register_setting(
+			'SDC_comments', 
+			'SDC_comments_setting'
+		);
+
+		add_settings_section(
+			'simple_disable_comments_setting_section',
+			'Simple Disable Comments Settings',
+			array( $this, 'simple_disable_comments_section_info' ), 
+			'simple-disable-comments-admin'
+		);
+
+		add_settings_field(
+			'rm_comments_from_admin_bar', 
+			'Remove comments links from admin bar', 
+			array( $this, 'remove_comments_links_from_admin_bar' ), 
+			'simple-disable-comments-admin', 
+			'simple_disable_comments_setting_section'
+		);
+
+		add_settings_field(
+			'rm_comments_page_in_menu', // id
+			'Remove comments page in menu', // title
+			array( $this, 'rm_comments_page_in_menu_callback' ), // callback
+			'simple-disable-comments-admin', // page
+			'simple_disable_comments_setting_section' // section
+		);
+
+		add_settings_field(
+			'hide_existing_comments', // id
+			'Hide existing comments', // title
+			array( $this, 'hide_existing_comments_callback' ), // callback
+			'simple-disable-comments-admin', // page
+			'simple_disable_comments_setting_section' // section
+		);
+
+		add_settings_field(
+			'close_comments_frontend', // id
+			'Close comments on the front-end', // title
+			array( $this, 'close_comments_frontend_callback' ), // callback
+			'simple-disable-comments-admin', // page
+			'simple_disable_comments_setting_section' // section
+		);
+
+		add_settings_field(
+			'rm_comments_meta_dashboard', // id
+			'Remove comments metabox from dashboard', // title
+			array( $this, 'rm_comments_meta_dashboard_callback' ), // callback
+			'simple-disable-comments-admin', // page
+			'simple_disable_comments_setting_section' // section
+		);
+
 	}
 
-	public function simple_disable_comments_sanitize($input) {
-		$sanitary_values = array();
-		if ( isset( $input['remove_comments_links_from_admin_bar_0'] ) ) {
-			$sanitary_values['remove_comments_links_from_admin_bar_0'] = $input['remove_comments_links_from_admin_bar_0'];
-		}
-
-		// if ( isset( $input['remove_comments_page_in_menu_1'] ) ) {
-		// 	$sanitary_values['remove_comments_page_in_menu_1'] = $input['remove_comments_page_in_menu_1'];
-		// }
-
-		// if ( isset( $input['hide_existing_comments_2'] ) ) {
-		// 	$sanitary_values['hide_existing_comments_2'] = $input['hide_existing_comments_2'];
-		// }
-
-		// if ( isset( $input['close_comments_on_the_front_end_3'] ) ) {
-		// 	$sanitary_values['close_comments_on_the_front_end_3'] = $input['close_comments_on_the_front_end_3'];
-		// }
-
-		// if ( isset( $input['remove_comments_metabox_from_dashboard_4'] ) ) {
-		// 	$sanitary_values['remove_comments_metabox_from_dashboard_4'] = $input['remove_comments_metabox_from_dashboard_4'];
-		// }
-
-		return $sanitary_values;
-	}
 
 	public function simple_disable_comments_section_info() {
 		
 	}
 
-	public function remove_comments_links_from_admin_bar_0_callback() {
+	public function remove_comments_links_from_admin_bar() {
+		$SDC_settings = get_option( 'SDC_comments_setting' );
+		error_log(print_r($SDC_settings, true));
+
 		printf(
-			'<input type="checkbox" name="simple_disable_comments_option_name[remove_comments_links_from_admin_bar_0]" id="remove_comments_links_from_admin_bar_0" value="remove_comments_links_from_admin_bar_0" %s>',
-			( isset( $this->simple_disable_comments_options['remove_comments_links_from_admin_bar_0'] ) && $this->simple_disable_comments_options['remove_comments_links_from_admin_bar_0'] === 'remove_comments_links_from_admin_bar_0' ) ? 'checked' : ''
+			'<input type="checkbox" name="SDC_comments_setting[rm_comments_from_admin_bar]" id="rm_comments_from_admin_bar" value="1" %s>',
+		 	isset( $SDC_settings['rm_comments_from_admin_bar'] ) ? checked( 1, $SDC_settings['rm_comments_from_admin_bar'], false) : ''
 		);
 	}
 
-	// public function remove_comments_page_in_menu_1_callback() {
-	// 	printf(
-	// 		'<input type="checkbox" name="simple_disable_comments_option_name[remove_comments_page_in_menu_1]" id="remove_comments_page_in_menu_1" value="remove_comments_page_in_menu_1" %s>',
-	// 		( isset( $this->simple_disable_comments_options['remove_comments_page_in_menu_1'] ) && $this->simple_disable_comments_options['remove_comments_page_in_menu_1'] === 'remove_comments_page_in_menu_1' ) ? 'checked' : ''
-	// 	);
-	// }
+	public function rm_comments_page_in_menu_callback() {
+		$SDC_settings = get_option( 'SDC_comments_setting' );
+		printf(
+			'<input type="checkbox" name="SDC_comments_setting[rm_comments_page]" id="rm_comments_page" value="1" %s>',
+			isset( $SDC_settings['rm_comments_page'] ) ? checked( 1, $SDC_settings['rm_comments_page'], false) : ''
+		);
+	}
 
-	// public function hide_existing_comments_2_callback() {
-	// 	printf(
-	// 		'<input type="checkbox" name="simple_disable_comments_option_name[hide_existing_comments_2]" id="hide_existing_comments_2" value="hide_existing_comments_2" %s>',
-	// 		( isset( $this->simple_disable_comments_options['hide_existing_comments_2'] ) && $this->simple_disable_comments_options['hide_existing_comments_2'] === 'hide_existing_comments_2' ) ? 'checked' : ''
-	// 	);
-	// }
+	public function hide_existing_comments_callback() {
+		$SDC_settings = get_option( 'SDC_comments_setting' );
 
-	// public function close_comments_on_the_front_end_3_callback() {
-	// 	printf(
-	// 		'<input type="checkbox" name="simple_disable_comments_option_name[close_comments_on_the_front_end_3]" id="close_comments_on_the_front_end_3" value="close_comments_on_the_front_end_3" %s>',
-	// 		( isset( $this->simple_disable_comments_options['close_comments_on_the_front_end_3'] ) && $this->simple_disable_comments_options['close_comments_on_the_front_end_3'] === 'close_comments_on_the_front_end_3' ) ? 'checked' : ''
-	// 	);
-	// }
+		printf(
+			'<input type="checkbox" name="SDC_comments_setting[hide_existing_comments]" id="hide_existing_comments" value="1" %s>',
+			isset( $SDC_settings['hide_existing_comments'] ) ? checked( 1, $SDC_settings['hide_existing_comments'], false) : ''
+		);
+	}
 
-	// public function remove_comments_metabox_from_dashboard_4_callback() {
-	// 	printf(
-	// 		'<input type="checkbox" name="simple_disable_comments_option_name[remove_comments_metabox_from_dashboard_4]" id="remove_comments_metabox_from_dashboard_4" value="remove_comments_metabox_from_dashboard_4" %s>',
-	// 		( isset( $this->simple_disable_comments_options['remove_comments_metabox_from_dashboard_4'] ) && $this->simple_disable_comments_options['remove_comments_metabox_from_dashboard_4'] === 'remove_comments_metabox_from_dashboard_4' ) ? 'checked' : ''
-	// 	);
-	// }
+	public function close_comments_frontend_callback() {
+		$SDC_settings = get_option( 'SDC_comments_setting' );
+		
+		printf(
+			'<input type="checkbox" name="SDC_comments_setting[close_comments_frontend]" id="close_comments_frontend" value="1" %s>',
+			isset( $SDC_settings['close_comments_frontend'] ) ? checked( 1, $SDC_settings['close_comments_frontend'], false) : ''
+		);
+	}
+
+	public function rm_comments_meta_dashboard_callback() {
+		$SDC_settings = get_option( 'SDC_comments_setting' );
+
+		printf(
+			'<input type="checkbox" name="SDC_comments_setting[rm_comments_meta_dashboard]" id="rm_comments_meta_dashboard" value="1" %s>',
+			isset( $SDC_settings['rm_comments_meta_dashboard'] ) ? checked( 1, $SDC_settings['rm_comments_meta_dashboard'], false) : ''
+		);
+	}
 
 }
 
