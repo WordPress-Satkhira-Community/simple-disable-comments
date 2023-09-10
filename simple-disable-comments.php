@@ -37,10 +37,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
  class SimpleDisableComments {
 
-	private $simple_disable_comments_options;
-
-
-
 	private static $instance;
 
 	public static function get_instance(){
@@ -52,14 +48,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	}
 
 
+
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'simple_disable_comments_add_plugin_page' ] );
 		add_action( 'admin_init', [ $this, 'simple_disable_comments_page_init' ] );
 		add_action( 'init', [$this, 'init']);
-		add_filter('comments_array', [$this, '__return_empty_array' ], 10, 2);
 
-		add_filter('comments_open', [ $this, '__return_false' ], 20, 2);
-		add_filter('pings_open', [ $this, '__return_false' ], 20, 2);	
+		add_filter('comments_array', '__return_empty_array', 10, 2);
+
+		add_filter('comments_open', '__return_false', 20, 2);
+		add_filter('pings_open', '__return_false', 20, 2);	
 
 		add_action( 'plugins_loaded', [$this, 'sdc_load_textdomain' ] );	
  
@@ -88,12 +86,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 			array( $this, 'simple_disable_comments_create_admin_page' ) // function
 		);
 
-		remove_menu_page('edit-comments.php');
+
+
+		if ( !empty(get_option('SDC_comments_setting')['rm_comments_page']) ) {
+			remove_menu_page('edit-comments.php');
+		} 
+
 	}
 
 	public function simple_disable_comments_create_admin_page() {
-		$this->simple_disable_comments_options = get_option( 'SDC_comments_setting' ); 
-		error_log(print_r($this->simple_disable_comments_options, true));
 		?>
 
 		<div class="wrap">
@@ -193,7 +194,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	public function remove_comments_links_from_admin_bar() {
 		$SDC_settings = get_option( 'SDC_comments_setting' );
-		error_log(print_r($SDC_settings, true));
+		// error_log(print_r($SDC_settings, true));
 
 		printf(
 			'<input type="checkbox" name="SDC_comments_setting[rm_comments_from_admin_bar]" id="rm_comments_from_admin_bar" value="1" %s>',
@@ -220,7 +221,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	public function close_comments_frontend_callback() {
 		$SDC_settings = get_option( 'SDC_comments_setting' );
-		
+
 		printf(
 			'<input type="checkbox" name="SDC_comments_setting[close_comments_frontend]" id="close_comments_frontend" value="1" %s>',
 			isset( $SDC_settings['close_comments_frontend'] ) ? checked( 1, $SDC_settings['close_comments_frontend'], false) : ''
