@@ -1,23 +1,16 @@
 <?php
 
 /**
- * Simple Disable Comments
- *
- * @package           simple_disable_comments
- * @author            Delower Hossain
- * @copyright         2023 Delower Hossain
- * @license           GPL-2.0-or-later
- *
- * @wordpress-plugin
  * Plugin Name:       Simple Disable Comments
- * Plugin URI:        https://www.delowerhossain.com
+ * Plugin URI:        https://www.wpsatkhira.com/plugins/simple-disable-comments
  * Description:       Simple Disable Comments is a powerful WordPress plugin designed to give website administrators full control over comments on their WordPress websites. With this plugin, you can easily manage and customize the commenting system to suit your website's needs, whether you want to completely disable comments globally or on specific post types.
  * Version:           1.0
- * Requires at least: 5.2
- * Requires PHP:      7.2
- * Author:            Delower Hossain
- * Author URI:        https://www.delowerhossain.com
+ * Requires at least: 6.0
+ * Requires PHP:      7.4
+ * Author:            WordPress Satkhira Community
+ * Author URI:        https://www.wpsatkhira.com
  * Text Domain:       simple-disable-comments
+ * Domain Path:       /languages
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -29,6 +22,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+// Load Plugin Text Domain
+
+function sdc_load_textdomain() {
+    load_plugin_textdomain( 'simple-disable-comments', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+  }
+  add_action( 'plugins_loaded', 'sdc_load_textdomain' );
 
 
 /**
@@ -284,3 +283,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( is_admin() ) {
 	$simple_disable_comments = SimpleDisableComments::get_instance();
 }
+
+
+// Simple Disable Comments Option Links
+
+add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'sdc_add_action_links' );
+
+function sdc_add_action_links ( $actions ) {
+   $mylinks = array(
+      '<a href="' . admin_url( 'options-general.php?page=simple-disable-comments' ) . '">Settings</a>',
+   );
+   $actions = array_merge( $actions, $mylinks );
+   return $actions;
+}
+
+
+// Redirect to settings page once the plugin is activated
+function sdc_activation_redirect($plugin) {
+    if ($plugin == plugin_basename(__FILE__)) {
+        exit(wp_redirect(admin_url('options-general.php?page=simple-disable-comments')));
+    }
+}
+add_action('activated_plugin', 'sdc_activation_redirect');
