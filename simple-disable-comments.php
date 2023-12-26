@@ -58,6 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		add_filter('comments_open', '__return_false', 20, 2);
 		add_filter('pings_open', '__return_false', 20, 2);	
+		add_action( 'admin_enqueue_scripts', [ $this, 'disable_comment_admin_scripts' ] );
 
 		add_action( 'plugins_loaded', [$this, 'sdc_load_textdomain' ] );	
  
@@ -76,6 +77,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	        remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 60);
 	    }		
 	}
+
+	public function disable_comment_admin_scripts($hook) {
+        if( "settings_page_simple-disable-comments" != $hook ) {
+            return;
+        }
+        wp_enqueue_style( 'disable-comment-admin-style', plugin_dir_url(__FILE__) . 'assets/css/admin-style.css', [], '1.0.0' );
+    }
 
 	public function simple_disable_comments_add_plugin_page() {
 		add_options_page(
@@ -196,45 +204,77 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$SDC_settings = get_option( 'SDC_comments_setting' );
 		// error_log(print_r($SDC_settings, true));
 
-		printf(
-			'<input type="checkbox" name="SDC_comments_setting[rm_comments_from_admin_bar]" id="rm_comments_from_admin_bar" value="1" %s>',
-		 	isset( $SDC_settings['rm_comments_from_admin_bar'] ) ? checked( 1, $SDC_settings['rm_comments_from_admin_bar'], false) : ''
-		);
+		if (is_array($SDC_settings)) {
+			$checked = isset($SDC_settings['rm_comments_from_admin_bar']) ? true : false;
+		} else {
+			$checked = false;
+		}
+
+		echo'<label class="unity_switch">
+		  <input class="unity_input" type="checkbox" name="SDC_comments_setting[rm_comments_from_admin_bar]" id="rm_comments_from_admin_bar" '. checked( $checked, true, false ) .'>
+		  <span class="unity_toggle"></span>
+		</label>';
+
 	}
 
 	public function rm_comments_page_in_menu_callback() {
 		$SDC_settings = get_option( 'SDC_comments_setting' );
-		printf(
-			'<input type="checkbox" name="SDC_comments_setting[rm_comments_page]" id="rm_comments_page" value="1" %s>',
-			isset( $SDC_settings['rm_comments_page'] ) ? checked( 1, $SDC_settings['rm_comments_page'], false) : ''
-		);
+
+		if (is_array($SDC_settings)) {
+			$checked = isset($SDC_settings['rm_comments_page']) ? true : false;
+		} else {
+			$checked = false;
+		}
+
+		echo'<label class="unity_switch">
+		  <input class="unity_input" type="checkbox" name="SDC_comments_setting[rm_comments_page]" id="rm_comments_page" '. checked( $checked, true, false ) .'>
+		  <span class="unity_toggle"></span>
+		</label>';
 	}
 
 	public function hide_existing_comments_callback() {
 		$SDC_settings = get_option( 'SDC_comments_setting' );
 
-		printf(
-			'<input type="checkbox" name="SDC_comments_setting[hide_existing_comments]" id="hide_existing_comments" value="1" %s>',
-			isset( $SDC_settings['hide_existing_comments'] ) ? checked( 1, $SDC_settings['hide_existing_comments'], false) : ''
-		);
+		if (is_array($SDC_settings)) {
+			$checked = isset($SDC_settings['hide_existing_comments']) ? true : false;
+		} else {
+			$checked = false;
+		}
+
+		echo'<label class="unity_switch">
+		  <input class="unity_input" type="checkbox" name="SDC_comments_setting[hide_existing_comments]" id="hide_existing_comments" '. checked( $checked, true, false ) .'>
+		  <span class="unity_toggle"></span>
+		</label>';
 	}
 
 	public function close_comments_frontend_callback() {
 		$SDC_settings = get_option( 'SDC_comments_setting' );
 
-		printf(
-			'<input type="checkbox" name="SDC_comments_setting[close_comments_frontend]" id="close_comments_frontend" value="1" %s>',
-			isset( $SDC_settings['close_comments_frontend'] ) ? checked( 1, $SDC_settings['close_comments_frontend'], false) : ''
-		);
+		if (is_array($SDC_settings)) {
+			$checked = isset($SDC_settings['close_comments_frontend']) ? true : false;
+		} else {
+			$checked = false;
+		}
+
+		echo'<label class="unity_switch">
+		  <input class="unity_input" type="checkbox" name="SDC_comments_setting[close_comments_frontend]" id="close_comments_frontend" '. checked( $checked, true, false ) .'>
+		  <span class="unity_toggle"></span>
+		</label>';
 	}
 
 	public function rm_comments_meta_dashboard_callback() {
 		$SDC_settings = get_option( 'SDC_comments_setting' );
 
-		printf(
-			'<input type="checkbox" name="SDC_comments_setting[rm_comments_meta_dashboard]" id="rm_comments_meta_dashboard" value="1" %s>',
-			isset( $SDC_settings['rm_comments_meta_dashboard'] ) ? checked( 1, $SDC_settings['rm_comments_meta_dashboard'], false) : ''
-		);
+		if (is_array($SDC_settings)) {
+			$checked = isset($SDC_settings['rm_comments_meta_dashboard']) ? true : false;
+		} else {
+			$checked = false;
+		}
+
+		echo'<label class="unity_switch">
+		  <input class="unity_input" type="checkbox" name="SDC_comments_setting[rm_comments_meta_dashboard]" id="rm_comments_meta_dashboard" '. checked( $checked, true, false ) .'>
+		  <span class="unity_toggle"></span>
+		</label>';
 	}
 
 }
