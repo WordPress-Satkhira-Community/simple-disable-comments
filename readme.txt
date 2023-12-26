@@ -1,17 +1,19 @@
 === Simple Disable Comments ===
+Author URI: https://www.wpsatkhira.com
+Plugin URI: https://www.wpsatkhira.com/plugins/simple-disable-comments
 Contributors: wpdelower,
 Donate link: https://wpsatkhira.com/donate
-Tags: 1.0
+Tags: disable comments, simple disable comments, modify comments
 Requires at least: 6.0
 Tested up to: 6.4.2
 Stable tag: 1.0
-Requires PHP: 7.2
-License: GPLv2 or later
+Requires PHP: 7.4
+License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Simple Disable Comments is a powerful WordPress plugin designed to give website administrators full control over comments on their WordPress websites. With this plugin, you can easily manage and customize the commenting system to suit your website's needs, whether you want to completely disable comments globally or on specific post types.
-
 == Description ==
+
+Simple Disable Comments is a powerful WordPress plugin designed to give website administrators full control over comments on their WordPress websites. With this plugin, you can easily manage and customize the commenting system to suit your website's needs, whether you want to completely disable comments globally or on specific post types.
 
 == Features ==
 
