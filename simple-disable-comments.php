@@ -22,13 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-// Load Plugin Text Domain
-
-function sdc_load_textdomain() {
-    load_plugin_textdomain( 'simple-disable-comments', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
-  }
-  add_action( 'plugins_loaded', 'sdc_load_textdomain' );
-
 
 /**
  * Simple Disable Comments Options
