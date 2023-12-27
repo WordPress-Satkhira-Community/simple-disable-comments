@@ -42,24 +42,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 	public function __construct() {
+		add_action( 'plugins_loaded', [$this, 'sdc_load_textdomain' ] );
 		add_action( 'admin_menu', [ $this, 'simple_disable_comments_add_plugin_page' ] );
 		add_action( 'admin_init', [ $this, 'simple_disable_comments_page_init' ] );
+		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), [ $this, 'sdc_add_action_links' ] );
 		add_action( 'init', [$this, 'init']);
-
 		add_filter('comments_array', '__return_empty_array', 10, 2);
-
 		add_filter('comments_open', '__return_false', 20, 2);
 		add_filter('pings_open', '__return_false', 20, 2);	
 		add_action( 'admin_enqueue_scripts', [ $this, 'disable_comment_admin_scripts' ] );
+		add_action('activated_plugin', [ $this, 'sdc_activation_redirect' ]);
 
-		add_action( 'plugins_loaded', [$this, 'sdc_load_textdomain' ] );	
- 
 	}
 
 
-	/**
-	 * Load plugin textdomain.
-	 */
+
 	public function sdc_load_textdomain() {
 		load_plugin_textdomain( 'simple-disable-comments', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
 	}
@@ -76,6 +73,20 @@ if ( ! defined( 'ABSPATH' ) ) {
         }
         wp_enqueue_style( 'disable-comment-admin-style', plugin_dir_url(__FILE__) . 'assets/css/admin-style.css', [], '1.0.0' );
     }
+
+    public function sdc_add_action_links ( $actions ) {
+	   $mylinks = array(
+	      '<a href="' . admin_url( 'options-general.php?page=simple-disable-comments' ) . '">Settings</a>',
+	   );
+	   $actions = array_merge( $actions, $mylinks );
+	   return $actions;
+	}
+
+	public function sdc_activation_redirect($plugin) {
+	    if ($plugin == plugin_basename(__FILE__)) {
+	        exit(wp_redirect(admin_url('options-general.php?page=simple-disable-comments')));
+	    }
+	}
 
 	public function simple_disable_comments_add_plugin_page() {
 		add_options_page(
@@ -98,8 +109,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 
 		<div class="wrap">
-			<h2>Simple Disable Comments</h2>
-			<p>The simplest way to disable comments from your website.</p>
+			<h2><?php _e('Simple Disable Comments', 'simple-disable-comments');?></h2>
+			<p><?php _e('The simplest way to disable comments from your website.', 'simple-disable-comments');?></p>
 			<?php settings_errors(); ?>
 
 			<form method="post" action="options.php">
@@ -272,29 +283,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
-
 if ( is_admin() ) {
 	$simple_disable_comments = SimpleDisableComments::get_instance();
 }
-
-
-// Simple Disable Comments Option Links
-
-add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'sdc_add_action_links' );
-
-function sdc_add_action_links ( $actions ) {
-   $mylinks = array(
-      '<a href="' . admin_url( 'options-general.php?page=simple-disable-comments' ) . '">Settings</a>',
-   );
-   $actions = array_merge( $actions, $mylinks );
-   return $actions;
-}
-
-
-// Redirect to settings page once the plugin is activated
-function sdc_activation_redirect($plugin) {
-    if ($plugin == plugin_basename(__FILE__)) {
-        exit(wp_redirect(admin_url('options-general.php?page=simple-disable-comments')));
-    }
-}
-add_action('activated_plugin', 'sdc_activation_redirect');
